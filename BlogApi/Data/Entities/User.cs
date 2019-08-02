@@ -1,13 +1,8 @@
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-
 namespace BlogApi.Data.Entities
 {
-    public class User
+    public class User: Entity
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public string SubId { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string AvatarUrl { get; set; }
