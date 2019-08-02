@@ -5,11 +5,8 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace BlogApi.Data.Entities
 {
-    public class Post
+    public class Post: Entity
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
         public string Title { get; set; }
         public string Teaser { get; set; }
         public string Slug { get; set; }
