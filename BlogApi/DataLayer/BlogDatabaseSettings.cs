@@ -1,4 +1,4 @@
-namespace BlogApi.Data
+namespace BlogApi.DataLayer
 {
     public class BlogDatabaseSettings: IBlogDatabaseSettings
     {
