@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using BlogApi.Data;
-using BlogApi.Data.Entities;
+using BlogApi.DataLayer;
+using BlogApi.DataLayer.Entities;
 using MongoDB.Driver;
 
-namespace BlogApi.DAL.Repositories
+namespace BlogApi.DataAccessLayer.Repositories
 {
     public interface ICommentRepository: IRepository<Comment>
     {

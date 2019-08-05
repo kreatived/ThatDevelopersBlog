@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace BlogApi.Data.Entities
+namespace BlogApi.DataLayer.Entities
 {
     public class Post: Entity
     {
@@ -13,7 +13,7 @@ namespace BlogApi.Data.Entities
         public string Content { get; set; }
         public DateTime? PublicationDate { get; set; }
         [BsonRepresentation(BsonType.ObjectId)]
-        public string AuthorId { get; set; }
+        public Author Author { get; set; }
         public List<string> Likes { get; set; }
     }
 }

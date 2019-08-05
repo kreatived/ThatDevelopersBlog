@@ -1,5 +1,6 @@
-﻿using BlogApi.DAL.Repositories;
-using BlogApi.Data;
+﻿using BlogApi.DataAccessLayer.Repositories;
+using BlogApi.DataLayer;
+using BlogApi.ServiceLayer.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -26,9 +27,12 @@ namespace BlogApi
             );
             
             services.AddSingleton<IBlogDatabaseSettings>(sp => sp.GetRequiredService<IOptions<BlogDatabaseSettings>>().Value);
+
             services.AddTransient<IPostRepository, PostRepository>();
             services.AddTransient<ICommentRepository, CommentRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
+
+            services.AddTransient<IPostService, PostService>();
             
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

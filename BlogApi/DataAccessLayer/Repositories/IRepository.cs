@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using BlogApi.Data.Entities;
+using BlogApi.DataLayer.Entities;
 
-namespace BlogApi.DAL.Repositories
+namespace BlogApi.DataAccessLayer.Repositories
 {
     public interface IRepository<T> where T: Entity
     {
