@@ -8,6 +8,7 @@ namespace BlogApi.DataLayer.Entities
         public string Title { get; set; }
         public string Teaser { get; set; }
         public string Slug { get; set; }
+        public string HeaderImageUrl { get; set; }
         public string Content { get; set; }
         public DateTime? PublicationDate { get; set; }
         public Author Author { get; set; }
