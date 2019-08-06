@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
 
 namespace BlogApi.DataLayer.Entities
 {
@@ -12,7 +10,6 @@ namespace BlogApi.DataLayer.Entities
         public string Slug { get; set; }
         public string Content { get; set; }
         public DateTime? PublicationDate { get; set; }
-        [BsonRepresentation(BsonType.ObjectId)]
         public Author Author { get; set; }
         public List<string> Likes { get; set; }
     }
