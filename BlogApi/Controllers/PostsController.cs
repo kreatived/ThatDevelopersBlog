@@ -2,6 +2,7 @@ using BlogApi.DTO;
 using BlogApi.DTO.Responses;
 using BlogApi.Exceptions;
 using BlogApi.ServiceLayer.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Controllers
@@ -35,6 +36,13 @@ namespace BlogApi.Controllers
                 var message = $"Couldn't find post with ${ex.SearchBy} of ${ex.SearchValue}";
                 return NotFound(message);   
             }
+        }
+
+        [HttpGet("secret")]
+        [Authorize]
+        public ActionResult Protected()
+        {
+            return Ok("You have access!");
         }
     }
 }
