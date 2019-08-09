@@ -3,11 +3,12 @@ using BlogApi.DTO.Responses;
 using BlogApi.Exceptions;
 using BlogApi.ServiceLayer.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/posts")]
     [ApiController]
     public class PostsController: ControllerBase
     {
@@ -18,7 +19,11 @@ namespace BlogApi.Controllers
             _postsService = postsService;
         }
 
+        /// <summary>
+        ///  Gets all published posts
+        /// </summary>
         [HttpGet]
+        [ProducesResponseType(typeof(GetPostsResponse), StatusCodes.Status200OK)]
         public ActionResult<GetPostsResponse> Get()
         {
             var posts = _postsService.GetPostSummaries();
@@ -26,7 +31,13 @@ namespace BlogApi.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Gets an individual published post using the associated slug
+        /// </summary>
+        /// <param name="slug">The uniquely identifying slug of a post</param>
         [HttpGet("{slug}")]
+        [ProducesResponseType(typeof(Post), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Post> Get(string slug)
         {
             try {
@@ -36,13 +47,6 @@ namespace BlogApi.Controllers
                 var message = $"Couldn't find post with ${ex.SearchBy} of ${ex.SearchValue}";
                 return NotFound(message);   
             }
-        }
-
-        [HttpGet("secret")]
-        [Authorize]
-        public ActionResult Protected()
-        {
-            return Ok("You have access!");
         }
     }
 }
