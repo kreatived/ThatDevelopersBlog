@@ -1,4 +1,9 @@
-﻿using BlogApi.DataAccessLayer.Repositories;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using BlogApi.DataAccessLayer.Repositories;
 using BlogApi.DataLayer;
 using BlogApi.ServiceLayer.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace BlogApi
 {
@@ -47,6 +53,35 @@ namespace BlogApi
                 options.Authority = domain;
                 options.Audience = Configuration["Auth0:ApiIdentifier"];
             });
+
+            services.AddSwaggerGen(c => 
+            {
+                c.SwaggerDoc("v1", new Info 
+                {
+                    Title = "That Developers Blog Api",
+                    Version = "v1",
+                    Description = "The official API used to interact with That Developers Blog",
+                    Contact = new Contact
+                    {
+                        Name = "Derek Jensen",
+                    }
+                });
+                c.AddSecurityDefinition("Bearer",
+                    new ApiKeyScheme
+                    {
+                        In = "header",
+                        Name = "Authorization",
+                        Type = "apiKey"
+                    });
+                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> 
+                {
+                    { "Bearer", Enumerable.Empty<string>() },
+                });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,6 +96,12 @@ namespace BlogApi
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+            });
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
