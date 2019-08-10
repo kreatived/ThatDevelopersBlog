@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 
-namespace BlogApi.DataLayer.Entities
+namespace BlogApi.ServiceLayer.Models
 {
-    public class User: Entity
+    public class ApplicationUser
     {
+        public string Id { get; set; }
         public string SubId { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }

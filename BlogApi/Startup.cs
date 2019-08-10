@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using BlogApi.DataAccessLayer.Repositories;
 using BlogApi.DataLayer;
+using BlogApi.ServiceLayer;
 using BlogApi.ServiceLayer.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -40,6 +41,8 @@ namespace BlogApi
             services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddTransient<IPostService, PostService>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ISlugService, SlugService>();
             
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 

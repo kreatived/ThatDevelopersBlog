@@ -1,6 +1,7 @@
 using BlogApi.DataAccessLayer.Repositories;
 using BlogApi.DataLayer.Entities;
 using BlogApi.Exceptions;
+using BlogApi.ServiceLayer;
 using BlogApi.ServiceLayer.Services;
 using Moq;
 using NUnit.Framework;
@@ -12,6 +13,7 @@ namespace BlogApi.Tests.ServiceLayerTests.PostsServiceTests
     {
         private MockRepository _mockRepository;
         private Mock<IPostRepository> _postRepository;
+        private Mock<ISlugService> _slugService; 
 
         private IPostService _postsService;
 
@@ -20,8 +22,9 @@ namespace BlogApi.Tests.ServiceLayerTests.PostsServiceTests
         {
             _mockRepository = new MockRepository(MockBehavior.Strict) {DefaultValue = DefaultValue.Mock};
             _postRepository = _mockRepository.Create<IPostRepository>();
+            _slugService = _mockRepository.Create<ISlugService>();
 
-            _postsService = new PostService(_postRepository.Object);
+            _postsService = new PostService(_slugService.Object, _postRepository.Object);
         }
 
         [TearDown]

@@ -1,6 +1,10 @@
+using System.Linq;
+using System.Security.Claims;
 using BlogApi.DTO;
+using BlogApi.DTO.Posts;
 using BlogApi.DTO.Responses;
 using BlogApi.Exceptions;
+using BlogApi.ServiceLayer.Models;
 using BlogApi.ServiceLayer.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -12,10 +16,12 @@ namespace BlogApi.Controllers
     [ApiController]
     public class PostsController: ControllerBase
     {
+        private IUserService _userService;
         private IPostService _postsService;
 
-        public PostsController(IPostService postsService)
+        public PostsController(IUserService userService, IPostService postsService)
         {
+            _userService = userService;
             _postsService = postsService;
         }
 
@@ -24,7 +30,7 @@ namespace BlogApi.Controllers
         /// </summary>
         [HttpGet]
         [ProducesResponseType(typeof(GetPostsResponse), StatusCodes.Status200OK)]
-        public ActionResult<GetPostsResponse> Get()
+        public ActionResult<GetPostsResponse> GetAll()
         {
             var posts = _postsService.GetPostSummaries();
             var response = new GetPostsResponse(posts);
@@ -46,6 +52,32 @@ namespace BlogApi.Controllers
             {
                 var message = $"Couldn't find post with ${ex.SearchBy} of ${ex.SearchValue}";
                 return NotFound(message);   
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ProducesResponseType(typeof(Post), StatusCodes.Status201Created)]
+        public ActionResult<Post> Create(PostForCreate postForCreate)
+        {
+            try{
+                if(!ModelState.IsValid) 
+                {
+                    return BadRequest(ModelState);
+                }
+                
+                var subId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+                var user = _userService.GetUserBySubId(subId);
+
+                var newPost = _postsService.CreatePost(postForCreate, user);
+
+                return CreatedAtAction(nameof(Get), newPost);
+            }catch(UserNotFoundException)
+            {
+                return BadRequest();
+            }catch(UnauthorizedOperationException)
+            {
+                return BadRequest();
             }
         }
     }

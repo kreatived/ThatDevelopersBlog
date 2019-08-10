@@ -1,8 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BlogApi.DataAccessLayer.Repositories;
 using BlogApi.DTO;
+using BlogApi.DTO.Posts;
 using BlogApi.Exceptions;
+using BlogApi.ServiceLayer.Models;
+using PostEntity = BlogApi.DataLayer.Entities.Post;
+using AuthorEntity = BlogApi.DataLayer.Entities.Author;
 
 namespace BlogApi.ServiceLayer.Services
 {
@@ -10,14 +15,17 @@ namespace BlogApi.ServiceLayer.Services
     {
         List<PostSummary> GetPostSummaries();
         Post GetPost(string slug);
+        Post CreatePost(PostForCreate postForCreate, ApplicationUser byUser);
     }
 
     public class PostService : IPostService
     {
+        private readonly ISlugService _slugService;
         private readonly IPostRepository _postRepository;
 
-        public PostService(IPostRepository postRepository)
+        public PostService(ISlugService slugService, IPostRepository postRepository)
         {
+            _slugService = slugService;
             _postRepository = postRepository;
         }
 
@@ -40,6 +48,41 @@ namespace BlogApi.ServiceLayer.Services
             }
 
             return new Post(post);
+        }
+
+        public Post CreatePost(PostForCreate postForCreate, ApplicationUser byUser)
+        {
+            ValidateUserCanCreatePosts(byUser);
+
+            var post = new PostEntity 
+            {
+                Title = postForCreate.Title,
+                Teaser = postForCreate.Teaser,
+                Slug = _slugService.GenerateSlugForPostTitle(postForCreate.Title),
+                HeaderImageUrl = postForCreate.HeaderImageUrl,
+                Content = postForCreate.Content,
+                CreatedDate = DateTime.UtcNow,
+                LastUpdatedDate = DateTime.UtcNow,
+                Likes = new List<string>(),
+                Author = new AuthorEntity
+                {
+                    Id = byUser.Id,
+                    Name = byUser.Name,
+                    AvatarUrl = byUser.AvatarUrl
+                }
+            };
+
+            return new Post(_postRepository.Insert(post));
+        }
+
+        private static void ValidateUserCanCreatePosts(ApplicationUser byUser)
+        {
+            byUser.Permissions.TryGetValue("CanCreatePosts", out bool canCreatePosts);
+
+            if(!canCreatePosts)
+            {
+                throw new UnauthorizedOperationException(byUser.Id, "Create Post");
+            }
         }
     }
 }
