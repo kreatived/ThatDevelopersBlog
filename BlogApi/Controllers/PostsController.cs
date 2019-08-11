@@ -55,10 +55,14 @@ namespace BlogApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Creates a new instance of a blog post
+        /// </summary>
+        /// <param name="postForCreate">An object representing the data for a new blog post</param>
         [HttpPost]
         [Authorize]
         [ProducesResponseType(typeof(Post), StatusCodes.Status201Created)]
-        public ActionResult<Post> Create(PostForCreate postForCreate)
+        public ActionResult<Post> Create([FromBody]PostForCreate postForCreate)
         {
             try{
                 if(!ModelState.IsValid) 
@@ -72,6 +76,37 @@ namespace BlogApi.Controllers
                 var newPost = _postsService.CreatePost(postForCreate, user);
 
                 return CreatedAtAction(nameof(Get), newPost);
+            }catch(UserNotFoundException)
+            {
+                return BadRequest();
+            }catch(UnauthorizedOperationException)
+            {
+                return BadRequest();
+            }
+        }
+
+        /// <summary>
+        /// Update an existing instance of a blog post
+        /// </summary>
+        /// <param name="postId">The unique id of the blog post to update</param>
+        /// <param name="postForUpdate">An object representing the data for the updated blog post</param>
+        [HttpPut("{postId}")]
+        [Authorize]
+        public ActionResult Update(string postId, [FromBody]PostForUpdate postForUpdate)
+        {
+            try
+            {
+                if(!ModelState.IsValid)
+                {
+                    return BadRequest(postForUpdate);
+                }
+
+                var subId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+                var user = _userService.GetUserBySubId(subId);
+
+                _postsService.UpdatePost(postId, postForUpdate, user);
+
+                return Ok();
             }catch(UserNotFoundException)
             {
                 return BadRequest();
