@@ -16,6 +16,7 @@ namespace BlogApi.ServiceLayer.Services
         List<PostSummary> GetPostSummaries();
         Post GetPost(string slug);
         Post CreatePost(PostForCreate postForCreate, ApplicationUser byUser);
+        void UpdatePost(string postId, PostForUpdate postForUpdate, ApplicationUser byUser); 
     }
 
     public class PostService : IPostService
@@ -73,6 +74,36 @@ namespace BlogApi.ServiceLayer.Services
             };
 
             return new Post(_postRepository.Insert(post));
+        }
+
+        public void UpdatePost(string postId, PostForUpdate postForUpdate, ApplicationUser byUser)
+        {
+            ValidateUserCanUpdatePosts(byUser);
+
+            var post = _postRepository.GetById(postId);
+            if(post == null)
+            {
+                throw new PostNotFoundException("id", postId);
+            }
+
+            post.Title = postForUpdate.Title;
+            post.Teaser = postForUpdate.Teaser;
+            post.HeaderImageUrl = postForUpdate.HeaderImageUrl;
+            post.Content = postForUpdate.Content;
+            post.LastUpdatedDate = DateTime.UtcNow;
+            post.Slug = _slugService.GenerateSlugForPostTitle(postForUpdate.Title);
+
+            _postRepository.Update(postId, post);
+        }
+
+        private static void ValidateUserCanUpdatePosts(ApplicationUser byUser)
+        {
+            byUser.Permissions.TryGetValue("CanUpdatePosts", out bool canUpdatePosts);
+
+            if(!canUpdatePosts)
+            {
+                throw new UnauthorizedOperationException(byUser.Id, "Update Post");
+            }
         }
 
         private static void ValidateUserCanCreatePosts(ApplicationUser byUser)
