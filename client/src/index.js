@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
-const title = 'Welcome to That Developers Blog';
+import { App } from './components/App';
+import './index.css';
 
 ReactDOM.render(
-    <div>{title}</div>,
+    <App/>,
     document.getElementById('root')
 );

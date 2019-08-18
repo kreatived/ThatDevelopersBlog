@@ -44,6 +44,7 @@ namespace BlogApi
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<ISlugService, SlugService>();
             
+            services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             var domain = $"https://{Configuration["Auth0:Domain"]}/";
@@ -108,6 +109,9 @@ namespace BlogApi
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
+            app.UseCors(
+                options => options.WithOrigins("http://localhost:8080").AllowAnyMethod()
+            );
             app.UseMvc();
         }
     }
