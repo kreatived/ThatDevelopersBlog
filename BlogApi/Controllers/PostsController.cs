@@ -4,7 +4,6 @@ using BlogApi.DTO;
 using BlogApi.DTO.Posts;
 using BlogApi.DTO.Responses;
 using BlogApi.Exceptions;
-using BlogApi.ServiceLayer.Models;
 using BlogApi.ServiceLayer.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
