@@ -7,11 +7,13 @@ namespace BlogApi.DataAccessLayer.Repositories
 {
     public interface ICommentRepository: IRepository<Comment>
     {
-        
+        List<Comment> GetCommentsByPostId(string postId, int pageNum);
     }
 
     public class CommentRepository : Repository<Comment>, ICommentRepository
     {
+        private const int PageSize = 20;
+
         public CommentRepository(IBlogDatabaseSettings settings) : base(settings, settings.CommentsCollectionName)
         {
             var indexOptions = new CreateIndexOptions();
@@ -26,6 +28,11 @@ namespace BlogApi.DataAccessLayer.Repositories
                 commentIdPostedDateIndexModel
             };
             _entities.Indexes.CreateMany(indexModels);
+        }
+
+        public List<Comment> GetCommentsByPostId(string postId, int pageNum)
+        {
+            return _entities.Find(c => c.PostId == postId).SortBy(c => c.FullSlug).Skip(PageSize * pageNum).Limit(PageSize).ToList();
         }
     }
 }

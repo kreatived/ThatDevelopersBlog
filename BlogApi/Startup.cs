@@ -43,6 +43,7 @@ namespace BlogApi
             services.AddTransient<IPostService, PostService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<ISlugService, SlugService>();
+            services.AddTransient<ICommentService, CommentService>();
             
             services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
