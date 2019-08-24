@@ -9,7 +9,8 @@ export const Posts = () => {
 
         const loadData = async () => {
             try {
-                const response = await axios.get('https://localhost:5001/api/posts');
+                const requestUrl = process.env.API_BASE_URL + 'posts';
+                const response = await axios.get(requestUrl);
                 updatePosts(response.data.posts);
             }catch(error) {
                 console.error(error);
