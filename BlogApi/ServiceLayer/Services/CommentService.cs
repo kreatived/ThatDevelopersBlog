@@ -21,16 +21,16 @@ namespace BlogApi.ServiceLayer.Services
             _commentRepository = commentRepository;
         }
 
-        public List<DTO.Comments.Comment> GetPostComments(string postId, int pageNum)
+        public List<DTO.Comments.Comment> GetPostComments(string slug, int pageNum)
         {
-            var post = _postRepository.GetById(postId);
+            var post = _postRepository.GetBySlug(slug);
 
             if(post == null)
             {
-                throw new PostNotFoundException("id", postId);
+                throw new PostNotFoundException("slug", slug);
             }
 
-            var comments = _commentRepository.GetCommentsByPostId(postId, pageNum);
+            var comments = _commentRepository.GetCommentsByPostId(post.Id, pageNum);
             return comments.Select(c => new DTO.Comments.Comment(c)).ToList();
         }
     }

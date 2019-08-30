@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
 import './PostSummary.css';
 import Moment from 'react-moment';
 
@@ -28,9 +29,9 @@ export const PostSummary = (props) => {
             <p className="lead">{props.post.teaser}</p>
 
             <p className="text-right">
-                <a href="#" className="text-right">
+                <Link to={props.post.slug} className="text-right">
                     continue reading...
-                </a>
+                </Link>
             </p>
         </article>
     )

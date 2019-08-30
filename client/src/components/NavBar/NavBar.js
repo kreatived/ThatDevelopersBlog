@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
 
 export const NavBar = () => {
 
@@ -13,7 +14,7 @@ export const NavBar = () => {
                 <div className="collapse navbar-collapse" id="navbarCollapse">
                     <ul className="navbar-nav mr-auto">
                         <li className="nav-item active">
-                            <a href="#" className="nav-link">Home <span className="sr-only">(current)</span></a>
+                            <Link to="/" className="nav-link">Home</Link>
                         </li>
                     </ul>
                     <form className="form-inline my-2 my-lg-0">
